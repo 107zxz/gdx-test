@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.badlogic.gdx.graphics.Texture;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class DemoProj extends ApplicationAdapter {
@@ -17,9 +18,14 @@ public class DemoProj extends ApplicationAdapter {
 
     private Player player;
 
+    private Texture pSpr;
+
     @Override
     public void create() {
-        player = new Player();
+
+        pSpr = new Texture(Gdx.files.internal("player.png"));
+
+        player = new Player(pSpr);
 
         cam = new FollowCam(player, 640, 480);
 
@@ -28,6 +34,8 @@ public class DemoProj extends ApplicationAdapter {
 
         batch = new SpriteBatch();
 
+        // Set clear col
+        Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
     }
 
     @Override
@@ -35,22 +43,27 @@ public class DemoProj extends ApplicationAdapter {
 
         update();
 
-        Gdx.gl.glClearColor(0.15f, 0.15f, 0.2f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        cam.update();
 
+        // Disable this when you use transparancy
+        batch.disableBlending();
+
+        batch.begin();
         player.draw(batch);
+        batch.end();
     }
 
     public void update() {
         player.update();
+        cam.update();
+
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        player.dispose();
+        pSpr.dispose();
     }
 
     @Override
